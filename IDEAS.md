@@ -1,5 +1,15 @@
 # OpenClaw Evolution Ideas
 
+## 2026-02-10 (Cycle 9 - IMPLEMENTED)
+**Thought:** Hassfest still failing after fixing all platform files. Root cause: config_flow.py was missing type hint on `user_input` parameter. Hassfest requires type hints on ALL method parameters too, not just return types.
+
+**Skills Applied:** `python` (parameter type hints), `homeassistant` (config flow patterns)
+
+**Lesson:** Don't forget config_flow.py! Every parameter needs types:
+- `async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:`
+
+**Status:** ✅ Implemented in v1.1.6
+
 ## 2026-02-10 (Cycle 8 - IMPLEMENTED)
 **Thought:** Hassfest still failing! The coordinator fixes weren't enough. Root cause: ALL platform files (sensor.py, binary_sensor.py, button.py, event.py) were missing type hints on `__init__` methods and properties. Hassfest requires type hints on EVERY method in 2024+.
 
