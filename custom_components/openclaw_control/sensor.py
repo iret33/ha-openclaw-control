@@ -50,10 +50,10 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class OpenClawStatusSensor(CoordinatorEntity, SensorEntity):
+class OpenClawStatusSensor(CoordinatorEntity[OpenClawCoordinator], SensorEntity):
     """OpenClaw status sensor."""
 
-    def __init__(self, coordinator, description, entry_id):
+    def __init__(self, coordinator: OpenClawCoordinator, description: SensorEntityDescription, entry_id: str) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{entry_id}_{description.key}"
@@ -65,7 +65,7 @@ class OpenClawStatusSensor(CoordinatorEntity, SensorEntity):
         }
 
     @property
-    def native_value(self):
+    def native_value(self) -> str | int | None:
         data = self.coordinator.data
         if data is None:
             return None
@@ -79,10 +79,10 @@ class OpenClawStatusSensor(CoordinatorEntity, SensorEntity):
         return None
 
 
-class OpenClawNextTasksSensor(CoordinatorEntity, SensorEntity):
+class OpenClawNextTasksSensor(CoordinatorEntity[OpenClawCoordinator], SensorEntity):
     """Next scheduled tasks sensor."""
 
-    def __init__(self, coordinator, entry_id):
+    def __init__(self, coordinator: OpenClawCoordinator, entry_id: str) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry_id}_{SENSOR_NEXT_TASKS}"
         self._attr_name = "Next Tasks"
@@ -94,7 +94,7 @@ class OpenClawNextTasksSensor(CoordinatorEntity, SensorEntity):
         }
 
     @property
-    def native_value(self):
+    def native_value(self) -> str:
         data = self.coordinator.data
         if data and SENSOR_NEXT_TASKS in data:
             tasks = data[SENSOR_NEXT_TASKS]
@@ -102,7 +102,7 @@ class OpenClawNextTasksSensor(CoordinatorEntity, SensorEntity):
         return "Unknown"
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, list[str]]:
         data = self.coordinator.data
         if data and SENSOR_NEXT_TASKS in data:
             tasks = data[SENSOR_NEXT_TASKS]
@@ -110,10 +110,10 @@ class OpenClawNextTasksSensor(CoordinatorEntity, SensorEntity):
         return {}
 
 
-class OpenClawSkillsSensor(CoordinatorEntity, SensorEntity):
+class OpenClawSkillsSensor(CoordinatorEntity[OpenClawCoordinator], SensorEntity):
     """Active skills sensor."""
 
-    def __init__(self, coordinator, entry_id):
+    def __init__(self, coordinator: OpenClawCoordinator, entry_id: str) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry_id}_{SENSOR_SKILLS}"
         self._attr_name = "Active Skills"
@@ -125,14 +125,14 @@ class OpenClawSkillsSensor(CoordinatorEntity, SensorEntity):
         }
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         data = self.coordinator.data
         if data and SENSOR_SKILLS in data:
             return data[SENSOR_SKILLS].get("count", 0)
         return 0
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, list[str]]:
         data = self.coordinator.data
         if data and SENSOR_SKILLS in data:
             return {"skills": data[SENSOR_SKILLS].get("list", [])}

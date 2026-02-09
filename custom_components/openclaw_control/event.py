@@ -12,7 +12,7 @@ from .coordinator import OpenClawCoordinator
 
 EVENT_TYPES = [
     "evolution_started",
-    "evolution_completed", 
+    "evolution_completed",
     "error_encountered",
     "skill_loaded",
     "cycle_complete",
@@ -36,19 +36,19 @@ async def async_setup_entry(
 ) -> None:
     """Set up event entities."""
     coordinator: OpenClawCoordinator = hass.data[DOMAIN][entry.entry_id]
-    
+
     entities = [
         OpenClawLifecycleEvent(coordinator, desc, entry.entry_id)
         for desc in EVENT_DESCRIPTIONS
     ]
-    
+
     async_add_entities(entities)
 
 
-class OpenClawLifecycleEvent(CoordinatorEntity, EventEntity):
+class OpenClawLifecycleEvent(CoordinatorEntity[OpenClawCoordinator], EventEntity):
     """OpenClaw lifecycle event entity."""
 
-    def __init__(self, coordinator, description, entry_id):
+    def __init__(self, coordinator: OpenClawCoordinator, description: EventEntityDescription, entry_id: str) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{entry_id}_{description.key}"
@@ -65,7 +65,7 @@ class OpenClawLifecycleEvent(CoordinatorEntity, EventEntity):
         return EVENT_TYPES
 
     @property
-    def extra_state_attributes(self) -> dict:
+    def extra_state_attributes(self) -> dict[str, dict]:
         """Return current event data."""
         return self._event_data or {}
 

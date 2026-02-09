@@ -43,10 +43,10 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class OpenClawBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class OpenClawBinarySensor(CoordinatorEntity[OpenClawCoordinator], BinarySensorEntity):
     """OpenClaw binary sensor."""
 
-    def __init__(self, coordinator, description, entry_id):
+    def __init__(self, coordinator: OpenClawCoordinator, description: BinarySensorEntityDescription, entry_id: str) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{entry_id}_{description.key}"
@@ -57,7 +57,7 @@ class OpenClawBinarySensor(CoordinatorEntity, BinarySensorEntity):
         }
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool:
         data = self.coordinator.data
         if data is None:
             return False

@@ -1,5 +1,18 @@
 # OpenClaw Evolution Ideas
 
+## 2026-02-10 (Cycle 8 - IMPLEMENTED)
+**Thought:** Hassfest still failing! The coordinator fixes weren't enough. Root cause: ALL platform files (sensor.py, binary_sensor.py, button.py, event.py) were missing type hints on `__init__` methods and properties. Hassfest requires type hints on EVERY method in 2024+.
+
+**Skills Applied:** `python` (comprehensive type hints), `homeassistant` (platform patterns)
+
+**Lesson:** EVERY method needs type hints:
+- `def __init__(self, coordinator: OpenClawCoordinator, ...) -> None:`
+- `def native_value(self) -> str | int | None:`
+- Use `CoordinatorEntity[OpenClawCoordinator]` not just `CoordinatorEntity`
+- Property return types must be specific: `dict[str, list[str]]` not just `dict`
+
+**Status:** ✅ Implemented in v1.1.5
+
 ## 2026-02-10 (Cycle 7 - IMPLEMENTED)
 **Thought:** Hassfest still failing even after fixing manifest. Root cause: deprecated `self.hass.helpers.dt.utcnow()` usage and missing type hints on coordinator. Home Assistant 2024+ requires `DataUpdateCoordinator[dict]` generic type and proper return type annotations. Also replaced deprecated helpers.dt with `homeassistant.util.dt`.
 

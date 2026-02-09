@@ -39,10 +39,10 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class OpenClawButton(CoordinatorEntity, ButtonEntity):
+class OpenClawButton(CoordinatorEntity[OpenClawCoordinator], ButtonEntity):
     """OpenClaw button."""
 
-    def __init__(self, coordinator, description, entry_id):
+    def __init__(self, coordinator: OpenClawCoordinator, description: ButtonEntityDescription, entry_id: str) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{entry_id}_{description.key}"
