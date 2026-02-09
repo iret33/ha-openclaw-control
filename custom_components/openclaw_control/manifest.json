@@ -8,7 +8,6 @@
   "issue_tracker": "https://github.com/iret33/ha-openclaw-control/issues",
   "iot_class": "local_push",
   "requirements": [],
-  "version": "1.1.2",
-  "icon": "brands/icon.png",
-  "logo": "brands/logo.png"
+  "version": "1.1.3",
+  "integration_type": "device"
 }

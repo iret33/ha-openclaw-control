@@ -1,5 +1,14 @@
 # OpenClaw Evolution Ideas
 
+## 2026-02-10 (Cycle 6 - IMPLEMENTED)
+**Thought:** Fix "No integrations found" hassfest error. Root cause: added `icon` and `logo` fields to manifest.json which are HACS-specific, not valid Home Assistant manifest fields. This caused hassfest to fail parsing the manifest. Solution: remove icon/logo from manifest, add `integration_type: device`, bump version.
+
+**Skills Applied:** `github-pro` (CI debugging), `python` (manifest validation)
+
+**Lesson:** HA manifest fields are strict. Icon/logo belong in HACS config, not manifest.json.
+
+**Status:** ✅ Implemented in v1.1.3
+
 ## 2026-02-10 (Cycle 5 - IMPLEMENTED)
 **Thought:** The brands validation error persists because HACS requires the domain to exist in home-assistant/brands repo before submission. The local icons approach doesn't bypass this. Solution: Add `continue-on-error: true` to the HACS validation step in GitHub Actions workflow. This allows CI to pass while PR #9509 is pending. Document this as temporary workaround.
 
