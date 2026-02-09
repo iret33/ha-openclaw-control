@@ -1,0 +1,7 @@
+run_diagnostics:
+  name: Run Diagnostics
+  description: Trigger a self-diagnostic check.
+
+trigger_evolution:
+  name: Trigger Evolution
+  description: Manually trigger an evolution cycle.
