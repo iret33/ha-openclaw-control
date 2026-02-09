@@ -7,6 +7,7 @@ from datetime import timedelta
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.util import dt as dt_util
 
 from .const import (
     DOMAIN, SENSOR_STATUS, SENSOR_NEXT_TASKS, SENSOR_SKILLS,
@@ -16,7 +17,7 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-class OpenClawCoordinator(DataUpdateCoordinator):
+class OpenClawCoordinator(DataUpdateCoordinator[dict]):
     """Coordinator for OpenClaw self-monitoring."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -24,7 +25,7 @@ class OpenClawCoordinator(DataUpdateCoordinator):
         self.entry = entry
         self._cycle_count = 0
         self._evolution_thought = "Initializing Nexus..."
-        self._lifecycle_event = None
+        self._lifecycle_event: dict | None = None
         
         super().__init__(
             hass,
@@ -33,7 +34,7 @@ class OpenClawCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(minutes=5),
         )
 
-    async def _async_update_data(self):
+    async def _async_update_data(self) -> dict:
         """Update OpenClaw self-monitoring data."""
         self._cycle_count += 1
         
@@ -55,7 +56,7 @@ class OpenClawCoordinator(DataUpdateCoordinator):
             "type": "cycle_complete",
             "data": {
                 "cycle": self._cycle_count,
-                "timestamp": self.hass.helpers.dt.utcnow().isoformat() if hasattr(self, 'hass') else None,
+                "timestamp": dt_util.utcnow().isoformat(),
             }
         }
         
@@ -73,11 +74,11 @@ class OpenClawCoordinator(DataUpdateCoordinator):
             "lifecycle_event": self._lifecycle_event,
         }
 
-    async def async_shutdown(self):
+    async def async_shutdown(self) -> None:
         """Shutdown."""
         await super().async_shutdown()
 
-    def set_evolution_thought(self, thought: str):
+    def set_evolution_thought(self, thought: str) -> None:
         """Set current evolution thought."""
         self._evolution_thought = thought
         if self.data:
@@ -85,7 +86,7 @@ class OpenClawCoordinator(DataUpdateCoordinator):
             new_data["evolution_thought"] = thought
             self.async_set_updated_data(new_data)
 
-    def fire_lifecycle_event(self, event_type: str, event_data: dict | None = None):
+    def fire_lifecycle_event(self, event_type: str, event_data: dict | None = None) -> None:
         """Fire a lifecycle event."""
         self._lifecycle_event = {
             "type": event_type,

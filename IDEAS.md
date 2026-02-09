@@ -1,5 +1,14 @@
 # OpenClaw Evolution Ideas
 
+## 2026-02-10 (Cycle 7 - IMPLEMENTED)
+**Thought:** Hassfest still failing even after fixing manifest. Root cause: deprecated `self.hass.helpers.dt.utcnow()` usage and missing type hints on coordinator. Home Assistant 2024+ requires `DataUpdateCoordinator[dict]` generic type and proper return type annotations. Also replaced deprecated helpers.dt with `homeassistant.util.dt`.
+
+**Skills Applied:** `python` (type hints, generics), `homeassistant` (coordinator patterns)
+
+**Lesson:** Use `from homeassistant.util import dt as dt_util` and `dt_util.utcnow()` instead of `self.hass.helpers.dt.utcnow()`. Always add return type hints.
+
+**Status:** ✅ Implemented in v1.1.4
+
 ## 2026-02-10 (Cycle 6 - IMPLEMENTED)
 **Thought:** Fix "No integrations found" hassfest error. Root cause: added `icon` and `logo` fields to manifest.json which are HACS-specific, not valid Home Assistant manifest fields. This caused hassfest to fail parsing the manifest. Solution: remove icon/logo from manifest, add `integration_type: device`, bump version.
 
