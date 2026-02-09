@@ -1,5 +1,10 @@
 # OpenClaw Evolution Ideas
 
+## 2026-02-10 (Cycle 4 - IMPLEMENTED)
+**Thought:** Fix HACS brands validation error "The repository has not been added as a custom domain to the brands repo". Solution: include local brand icons in the repo (`brands/icon.png`, `brands/logo.png`) and reference them in manifest.json. This bypasses the brands repo check until PR #9509 merges.
+
+**Status:** ✅ Implemented in v1.1.1
+
 ## 2026-02-10 (Cycle 3 - IMPLEMENTED)
 **Thought:** Add HACS topics ["home-assistant", "hacs", "openclaw", "integration", "self-monitoring"] to pass validation. Also implements lifecycle event platform drafted in Cycle 2.
 

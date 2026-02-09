@@ -1,5 +1,7 @@
 {
   "name": "OpenClaw Control",
   "homeassistant": "2024.1.0",
-  "render_readme": true
+  "render_readme": true,
+  "zip_release": false,
+  "filename": "openclaw_control.zip"
 }
