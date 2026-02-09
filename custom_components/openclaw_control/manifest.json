@@ -1,0 +1,12 @@
+{
+  "domain": "openclaw_control",
+  "name": "OpenClaw Control",
+  "codeowners": ["@iret33"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/iret33/ha-openclaw-control",
+  "issue_tracker": "https://github.com/iret33/ha-openclaw-control/issues",
+  "iot_class": "local_push",
+  "requirements": [],
+  "version": "1.0.0"
+}
