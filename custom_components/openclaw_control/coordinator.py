@@ -24,6 +24,7 @@ class OpenClawCoordinator(DataUpdateCoordinator):
         self.entry = entry
         self._cycle_count = 0
         self._evolution_thought = "Initializing Nexus..."
+        self._lifecycle_event = None
         
         super().__init__(
             hass,
@@ -49,6 +50,15 @@ class OpenClawCoordinator(DataUpdateCoordinator):
             "ha-agent-swarm", "esphome-agent-panel"
         ]
         
+        # Lifecycle event for this cycle
+        self._lifecycle_event = {
+            "type": "cycle_complete",
+            "data": {
+                "cycle": self._cycle_count,
+                "timestamp": self.hass.helpers.dt.utcnow().isoformat() if hasattr(self, 'hass') else None,
+            }
+        }
+        
         return {
             SENSOR_STATUS: STATUS_ONLINE if self._cycle_count > 0 else STATUS_IDLE,
             SENSOR_NEXT_TASKS: next_tasks,
@@ -60,6 +70,7 @@ class OpenClawCoordinator(DataUpdateCoordinator):
             "evolution_thought": self._evolution_thought,
             "update_available": False,
             "online": True,
+            "lifecycle_event": self._lifecycle_event,
         }
 
     async def async_shutdown(self):
@@ -69,4 +80,18 @@ class OpenClawCoordinator(DataUpdateCoordinator):
     def set_evolution_thought(self, thought: str):
         """Set current evolution thought."""
         self._evolution_thought = thought
-        self.async_set_updated_data(self.data)
+        if self.data:
+            new_data = dict(self.data)
+            new_data["evolution_thought"] = thought
+            self.async_set_updated_data(new_data)
+
+    def fire_lifecycle_event(self, event_type: str, event_data: dict | None = None):
+        """Fire a lifecycle event."""
+        self._lifecycle_event = {
+            "type": event_type,
+            "data": event_data or {},
+        }
+        if self.data:
+            new_data = dict(self.data)
+            new_data["lifecycle_event"] = self._lifecycle_event
+            self.async_set_updated_data(new_data)
