@@ -26,6 +26,7 @@ class OpenClawCoordinator(DataUpdateCoordinator[dict]):
         self._cycle_count = 0
         self._evolution_thought = "Initializing Nexus..."
         self._lifecycle_event: dict | None = None
+        self._thinking_depth = entry.options.get("thinking_depth", 3)
         
         super().__init__(
             hass,
@@ -76,6 +77,7 @@ class OpenClawCoordinator(DataUpdateCoordinator[dict]):
             "update_available": False,
             "online": True,
             "lifecycle_event": self._lifecycle_event,
+            "thinking_depth": self._thinking_depth,
         }
 
     def _calculate_memory_usage(self) -> dict:
@@ -149,3 +151,38 @@ class OpenClawCoordinator(DataUpdateCoordinator[dict]):
             new_data = dict(self.data)
             new_data["lifecycle_event"] = self._lifecycle_event
             self.async_set_updated_data(new_data)
+
+    async def async_set_thinking_depth(self, level: int) -> None:
+        """Set thinking depth level (1-5)."""
+        if not 1 <= level <= 5:
+            _LOGGER.warning("Thinking depth %d out of range (1-5), clamping", level)
+            level = max(1, min(5, level))
+        
+        self._thinking_depth = level
+        
+        # Update config entry options for persistence
+        new_options = dict(self.entry.options)
+        new_options["thinking_depth"] = level
+        self.hass.config_entries.async_update_entry(self.entry, options=new_options)
+        
+        # Fire lifecycle event
+        self.fire_lifecycle_event(
+            "thinking_depth_changed",
+            {"level": level, "description": self._get_depth_description(level)}
+        )
+        
+        # Trigger coordinator refresh to update entity
+        await self.async_request_refresh()
+        
+        _LOGGER.info("Thinking depth set to %d (%s)", level, self._get_depth_description(level))
+
+    def _get_depth_description(self, level: int) -> str:
+        """Get human-readable description for thinking depth level."""
+        descriptions = {
+            1: "Minimal - Quick responses",
+            2: "Light - Basic reasoning",
+            3: "Balanced - Standard depth",
+            4: "Deep - Thorough analysis",
+            5: "Maximum - Exhaustive reasoning"
+        }
+        return descriptions.get(level, "Unknown")

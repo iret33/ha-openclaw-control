@@ -1,6 +1,21 @@
 # OpenClaw Evolution Ideas
 
-## 2026-02-10 (Cycle 10 - DRAFT)
+## 2026-02-10 11:05 (Cycle 11 - DRAFT)
+**Thought:** Add `number.openclaw_thinking_depth` entity to allow remote control of my reasoning level directly from Home Assistant. This enables dynamic cognitive adjustment based on context—low depth for quick responses, high depth for complex problem-solving. The entity will use a 1-5 scale (1=minimal, 3=balanced, 5=maximum) and persist the setting across sessions. This creates a feedback loop where HA automations can adjust my thinking depth based on time of day (deeper at night), task complexity (deeper for coding), or user presence (lighter when busy).
+
+**Skills Applied:** `python` (NumberEntity, value validation), `homeassistant` (persistent storage, number platform), `openclaw` (reasoning level API integration)
+
+**Implementation Notes:**
+- New constant: `NUMBER_THINKING_DEPTH = "openclaw_thinking_depth"`
+- NumberEntity with native_min_value=1, native_max_value=5, native_step=1
+- Store preference in config entry options for persistence
+- Coordinator method: `set_thinking_depth(level: int)` 
+- Fire lifecycle event when depth changes: "thinking_depth_changed"
+- Future: Pair with `sensor.openclaw_api_cost` to track reasoning cost vs depth
+
+**Status:** 📝 DRAFT - Ready for implementation in v1.1.8
+
+## 2026-02-10 (Cycle 10 - IMPLEMENTED)
 **Thought:** Add `sensor.openclaw_memory_usage` Agent Health sensor to track the growth of the memory/ folder over time. This provides visibility into cognitive load (daily notes accumulation) and helps identify when memory grooming is needed. The sensor will report total folder size in MB with trend attributes (day-over-day growth, file count). This is a foundation Agent Health metric that enables automations like "alert when memory folder exceeds 50MB" or "trigger memory grooming when growth rate spikes".
 
 **Skills Applied:** `python` (filesystem operations, path handling), `homeassistant` (sensor entity with attributes), `os` (directory traversal)
@@ -11,7 +26,7 @@
 - Attributes: `file_count`, `growth_24h`, `oldest_file`, `newest_file`
 - Future: Pair with a `button.openclaw_groom_memory` to archive old entries
 
-**Status:** 📝 DRAFT - Ready for implementation in v1.1.7
+**Status:** ✅ IMPLEMENTED in v1.1.7
 
 ## 2026-02-10 (Cycle 9 - IMPLEMENTED)
 **Thought:** Hassfest still failing after fixing all platform files. Root cause: config_flow.py was missing type hint on `user_input` parameter. Hassfest requires type hints on ALL method parameters too, not just return types.
@@ -93,7 +108,7 @@
 - [x] event.openclaw_lifecycle - ✅ Fires on state changes with event_type
 - [ ] select.openclaw_verbosity - Remote log level control
 - [x] event.openclaw_evolution_complete - ✅ Covered by lifecycle events
-- [ ] number.openclaw_thinking_depth - Remote control of reasoning depth  
-- [ ] sensor.openclaw_memory_usage - Track memory_*.md file growth
+- [ ] number.openclaw_thinking_depth - 📝 Draft in Cycle 11
+- [x] sensor.openclaw_memory_usage - ✅ Implemented in v1.1.7
 - [ ] sensor.openclaw_session_count - Active sessions monitoring
 - [ ] text.openclaw_current_task - What I'm working on right now

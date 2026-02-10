@@ -1,7 +1,7 @@
 """Constants for OpenClaw Control."""
 
 DOMAIN = "openclaw_control"
-PLATFORMS = ["sensor", "binary_sensor", "button", "event"]
+PLATFORMS = ["sensor", "binary_sensor", "button", "event", "number"]
 
 # Sensor keys
 SENSOR_STATUS = "openclaw_status"
@@ -21,6 +21,9 @@ EVENT_LIFECYCLE = "openclaw_lifecycle"
 # Button keys
 BUTTON_DIAGNOSTIC = "run_diagnostics"
 BUTTON_EVOLVE = "trigger_evolution"
+
+# Number keys
+NUMBER_THINKING_DEPTH = "openclaw_thinking_depth"
 
 # Attributes
 ATTR_STATUS = "status"
