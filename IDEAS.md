@@ -1,5 +1,18 @@
 # OpenClaw Evolution Ideas
 
+## 2026-02-10 (Cycle 10 - DRAFT)
+**Thought:** Add `sensor.openclaw_memory_usage` Agent Health sensor to track the growth of the memory/ folder over time. This provides visibility into cognitive load (daily notes accumulation) and helps identify when memory grooming is needed. The sensor will report total folder size in MB with trend attributes (day-over-day growth, file count). This is a foundation Agent Health metric that enables automations like "alert when memory folder exceeds 50MB" or "trigger memory grooming when growth rate spikes".
+
+**Skills Applied:** `python` (filesystem operations, path handling), `homeassistant` (sensor entity with attributes), `os` (directory traversal)
+
+**Implementation Notes:**
+- New constant: `SENSOR_MEMORY_USAGE = "openclaw_memory_usage"`
+- Calculate recursively: sum of all files in `memory/` folder
+- Attributes: `file_count`, `growth_24h`, `oldest_file`, `newest_file`
+- Future: Pair with a `button.openclaw_groom_memory` to archive old entries
+
+**Status:** 📝 DRAFT - Ready for implementation in v1.1.7
+
 ## 2026-02-10 (Cycle 9 - IMPLEMENTED)
 **Thought:** Hassfest still failing after fixing all platform files. Root cause: config_flow.py was missing type hint on `user_input` parameter. Hassfest requires type hints on ALL method parameters too, not just return types.
 

@@ -11,7 +11,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     DOMAIN, SENSOR_STATUS, SENSOR_NEXT_TASKS, SENSOR_SKILLS,
-    SENSOR_CYCLE_COUNT, STATUS_ONLINE, STATUS_IDLE
+    SENSOR_CYCLE_COUNT, SENSOR_MEMORY_USAGE, STATUS_ONLINE, STATUS_IDLE
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,6 +60,9 @@ class OpenClawCoordinator(DataUpdateCoordinator[dict]):
             }
         }
         
+        # Calculate memory usage (mock for now - will scan workspace/memory/)
+        memory_usage = self._calculate_memory_usage()
+        
         return {
             SENSOR_STATUS: STATUS_ONLINE if self._cycle_count > 0 else STATUS_IDLE,
             SENSOR_NEXT_TASKS: next_tasks,
@@ -68,10 +71,60 @@ class OpenClawCoordinator(DataUpdateCoordinator[dict]):
                 "list": skills,
             },
             SENSOR_CYCLE_COUNT: self._cycle_count,
+            SENSOR_MEMORY_USAGE: memory_usage,
             "evolution_thought": self._evolution_thought,
             "update_available": False,
             "online": True,
             "lifecycle_event": self._lifecycle_event,
+        }
+
+    def _calculate_memory_usage(self) -> dict:
+        """Calculate memory folder size and metadata."""
+        import os
+        from pathlib import Path
+        
+        # Get workspace memory path
+        workspace = Path("/home/wsl2/.openclaw/workspace")
+        memory_path = workspace / "memory"
+        
+        if not memory_path.exists():
+            return {
+                "size_mb": 0.0,
+                "file_count": 0,
+                "status": "no_memory_folder",
+            }
+        
+        total_size = 0
+        file_count = 0
+        files = []
+        
+        try:
+            for item in memory_path.iterdir():
+                if item.is_file():
+                    stat = item.stat()
+                    total_size += stat.st_size
+                    file_count += 1
+                    files.append({
+                        "name": item.name,
+                        "size": stat.st_size,
+                        "modified": stat.st_mtime,
+                    })
+        except (OSError, PermissionError):
+            return {
+                "size_mb": 0.0,
+                "file_count": 0,
+                "status": "access_error",
+            }
+        
+        # Sort by modification time for oldest/newest
+        files.sort(key=lambda x: x["modified"])
+        
+        return {
+            "size_mb": round(total_size / (1024 * 1024), 2),
+            "file_count": file_count,
+            "status": "ok",
+            "oldest_file": files[0]["name"] if files else None,
+            "newest_file": files[-1]["name"] if files else None,
         }
 
     async def async_shutdown(self) -> None:

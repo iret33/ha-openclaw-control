@@ -9,6 +9,7 @@ SENSOR_NEXT_TASKS = "openclaw_next_tasks"
 SENSOR_SKILLS = "openclaw_skills"
 SENSOR_CYCLE_COUNT = "openclaw_cycle_count"
 SENSOR_EVOLUTION_LOG = "openclaw_evolution"
+SENSOR_MEMORY_USAGE = "openclaw_memory_usage"
 
 # Binary sensor keys
 BINARY_SENSOR_UPDATE = "openclaw_update_available"
